@@ -29,7 +29,7 @@ biases_vector = nn.layers[0].biases.flatten()
 # Training loop
 for epoch in range(epochs):
     c = 0
-    for i in tqdm(range(len(train_images_flat)), desc="Processing", unit="iteration"):
+    for i in tqdm(range(len(train_images_flat)), desc="Processing", unit="smp"):
       # Forward propagation
       inputs = train_images_flat[i]
       targets = np.zeros(10)
@@ -45,33 +45,28 @@ for epoch in range(epochs):
   
     print(f"\nepoch {epoch+1}. acc: {c / train_images_flat.shape[0] * 100:.2f}%")
 
-def save_network(topology, layers, filename):
-    with open(filename, 'w') as file:
-        # Save topology
-        file.write(f"Topology: {topology}\n")
 
-        file.write("Layers:\n")
-        for i in range(len(layers)):
-            file.write(f"Layer {i}:\n")
-            
-            file.write(f"Weights:\n{str(layers[i].weights)}\n")
-            
-            # Flatten biases to a vector before writing
-            biases_vector = layers[i].biases.flatten()
-            file.write(f"Biases:\n{str(biases_vector)}\n")
-            
-            file.write(f"\n")
+path = input("Path: ")
+name = input("Name: ")
 
+filename = path + name
+nn.save(filename)
 
-biases_vector = nn.layers[0].biases.flatten()
-path = input("Enter the path to save: ")
-filename = input("Enter the filename to save: ")
+#
+#while(True):
+#   img = int(input("Pick an image (0 - 59999): "))
+#  if(img > 59999 or img < 0): break
+#   
+#   prd = np.argmax(nn.forward_prop(train_images_flat[img]))
+#   
+#   plt.imshow(train_images[img], cmap='gray')
+#   plt.title(f"prediction: {prd}")
+#   plt.show()
 
-f = path + filename + ".nn"
+   
+   
 
-save_network(topology, nn.layers, f)
-
-
+   
 
             
 

@@ -37,6 +37,7 @@ class Layer:
 
 class NeuralNetwork:
     def __init__(self, topology):
+        self.topology = topology
         self.layers = []
         for i in range(len(topology)):
             if i == 0:
@@ -63,10 +64,36 @@ class NeuralNetwork:
         
         self.layers[self.L].weights -= learning_rate * (error * sigmoid_derivative(self.layers[self.L].z_activations) @ self.layers[self.L-1].activations.T)
         self.layers[self.L].biases -= learning_rate * (error * sigmoid_derivative(self.layers[self.L].z_activations))
-        # Backpropagation for Hidden Layers
+        # Backpropagation for Hidden Layers 
         for k in range(self.L-1, -1, -1):
             error = self.layers[k+1].weights.T @ error * sigmoid_derivative(self.layers[k].z_activations)
             previusLayerActivations =  self.layers[k-1].activations.T if k > 0 else inputs.T
             self.layers[k].weights -= learning_rate * (error @ previusLayerActivations)
             self.layers[k].biases -= learning_rate * (error)
+    
+    def save(self, filename):
+        weights_dict = {f'layer_{i}_weights': layer.weights for i, layer in enumerate(self.layers)}
+        biases_dict = {f'layer_{i}_biases': layer.biases for i, layer in enumerate(self.layers)}
+    
+        np.savez(filename, topology=self.topology, **weights_dict, **biases_dict)
+
+
+    @classmethod
+    def load(cls, filename):
+        # Load weights, biases, and topology from a file
+        data = np.load(filename)
+        topology = data['topology'].tolist()
+        layers = []
+
+        for i in range(1, len(topology)):
+            layer = Layer(topology[i-1], topology[i])
+            layer.weights = data[f'layer_{i}_weights']
+            layer.biases = data[f'layer_{i}_biases']
+            layers.append(layer)
+
+        nn = cls(topology)
+        nn.layers = layers
+        nn.L = len(layers) - 1
+
+        return nn
 
