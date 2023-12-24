@@ -28,8 +28,6 @@ nn = NeuralNetwork(topology)
 learning_rate = float(input("Learning Rate: "))
 epochs = int(input("Epochs: "))
 
-biases_vector = nn.layers[0].biases.flatten()
-
 # Training loop
 for epoch in range(epochs):
     c = 0
