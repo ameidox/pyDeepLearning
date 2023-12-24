@@ -2,8 +2,12 @@ from network import *
 
 import matplotlib.pyplot as plt
 import mnist 
+import ctypes
 from tqdm import tqdm
+from tkinter import filedialog
 import random
+
+ctypes.windll.kernel32.SetConsoleTitleW("NerualTrainer")
 
 # Load MNIST data
 train_images = mnist.train_images()
@@ -46,11 +50,23 @@ for epoch in range(epochs):
     print(f"\nepoch {epoch+1}. acc: {c / train_images_flat.shape[0] * 100:.2f}%")
 
 
-path = input("Path: ")
-name = input("Name: ")
+if(input("Save network? (y/n) ").lower() == 'y'):
+   options = {
+      'defaultextension': '.npz',
+      'filetypes': [('Network Files', '*.npz'), ('All Files', '*.*')],
+   }
 
-filename = path + name
-nn.save(filename)
+   file_path = filedialog.asksaveasfilename(**options)
+
+   if file_path:
+      nn.save(file_path)
+      print(f"Network saved to: {file_path}")
+      
+   nn.save(file_path)
+   
+
+
+
 
 #
 #while(True):
